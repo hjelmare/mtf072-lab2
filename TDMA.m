@@ -12,6 +12,10 @@ function [T,epsilon] = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
     sCoeff = ones(rows,cols);
     sCoeff(2,:) = 2;
     
+    for i = 2:rows-1
+        
+    end
+    
     %Performing Gauss-Seidel update
     maxR = 0;
     for j = 2:cols-1
