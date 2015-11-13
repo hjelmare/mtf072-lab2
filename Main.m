@@ -32,7 +32,9 @@ deltaY = [1 deltaY 1];
 epsilon = inf;
 while (epsilon > maxDiff)
    
-    [T,epsilon] = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor);  
+    T = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor);
+    
+    epsilon = CalcEpsilon(T);
     
 end
 
