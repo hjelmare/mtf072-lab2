@@ -14,21 +14,9 @@ c1 = 20;
 c2 = 0.2;
 
 % Non-uniform grid
-edgesX = [0:0.01:0.2 0.25:0.05:0.85 0.855:0.01:1];
-edgesY = [0:0.01:0.2 0.25:0.05:1];
+edgesX = dlmread('k2/xc.dat')';
+edgesY = dlmread('k2/yc.dat')';
 
-
-% % Non-uniform grid for Dirichlet T3=0
-% edgesX = [0:0.01:0.35 0.4:0.05:0.85 0.855:0.01:1];
-% edgesY = [0:0.01:0.2 0.25:0.05:0.5 0.51:0.01:1];
-% 
-% %Finer but uniform
-% edgesX = [0:0.01:1];
-% edgesY = [0:0.01:1];
-
-% % Overly coarse grid
-% edgesX = [0:0.1:1];
-% edgesY = [0:0.1:1];
 
 tic
 %Initializing mesh and temperature

@@ -1,4 +1,4 @@
-function [T, pY, pX] = initializeMesh(edgesY, edgesX,T1,T2)
+function [T, pY, pX] = initializeMesh(edgesY, edgesX,T1,T2,T3,T4)
 
 
     edgesX = [2*edgesX(1)-edgesX(2) edgesX 2*edgesX(end)-edgesX(end-1)];
