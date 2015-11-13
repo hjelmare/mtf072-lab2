@@ -10,8 +10,8 @@ function [T, pY, pX] = initializeMesh(edgesY, edgesX,T1,T2,T3,T4)
     outMesh = zeros(length(ptPosY),length(ptPosX));
     outMesh(1,:) = T1;
     outMesh(:,end) = T2;
-    outMesh(end,:) = 5;
-    outMesh(:,1) = ptPosY*20;
+    outMesh(end,:) = T3;
+    outMesh(:,1) = T4;
 
 
     T = outMesh;
