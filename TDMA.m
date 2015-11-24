@@ -19,7 +19,7 @@ function [T] = TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
     d = a;
     P = zeros(cols,1);
     
-    for i = 2:rows-1
+    for i = 2:rows-1 % for each row of the matrix storing the data points
         an = deltaY(i)/(y(i+1) - y(i)) * gamma;
         as = deltaY(i)/(y(i) - y(i-1)) * gamma;
         
@@ -30,12 +30,12 @@ function [T] = TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
                 
         P(2) = b(2)/a(2);
         Q(2) = ( d(2)-c(2)*T(i,1) )/ a(2);
-        for j = 3:cols-1
+        for j = 3:cols-1    % for (almost) each column in the P-matrix
             a(j) = ap(j);
             b(j) = ae*eCoeff(i,j);
             c(j) = aw*wCoeff(i,j);
             d(j) = an*T(i-1,j) + as*T(i+2,j); % + source term??
-                        
+            
             P(j) = b(j) / (a(j) - c(j)*P(j-1));
             Q(j) = (d(j) + c(j)*Q(j-1))/(a(j)-c(j)*P(j-1));
         end

@@ -16,8 +16,8 @@ c1 = 20;
 c2 = 0.2;
 
 % Non-uniform grid
-edgesX = dlmread('k2/xc.dat')';
-edgesY = dlmread('k2/yc.dat')';
+edgesX = dlmread('data/xc.dat')';
+edgesY = dlmread('data/yc.dat')';
 
 
 tic
