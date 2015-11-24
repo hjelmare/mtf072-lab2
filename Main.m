@@ -6,6 +6,7 @@ clear variables;
 maxDiff = 1e-3;
 initialT = 5;
 kFactor = 1;
+gamma = 1/500;
 L = 1;
 H = 1;
 T1 = 10;
@@ -14,6 +15,7 @@ T3 = 5;
 T4 = 10;
 c1 = 20;
 c2 = 0.2;
+BC = [2 2 0 2];
 
 % Non-uniform grid
 edgesX = dlmread('k2/xc.dat')';
@@ -32,9 +34,9 @@ deltaY = [1 deltaY 1];
 epsilon = inf;
 while (epsilon > maxDiff)
    
-    T = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor);
+    T = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor,BC);
     
-    epsilon = CalcEpsilon(T);
+    epsilon = CalcEpsilon(T,x,y,deltaX,deltaY,gamma,BC);
     
 end
 
