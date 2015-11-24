@@ -24,7 +24,7 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
     Q = zeros(cols,1);
     
     for i = 2:rows-1 % for each row of the matrix storing the data points
-        disp(['iteration ' num2str(i)])
+        disp(['row ' num2str(i)])
         
         an = deltaY(i)/(y(i+1) - y(i)) * gamma;
         as = deltaY(i)/(y(i) - y(i-1)) * gamma;
@@ -42,29 +42,33 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
         P(2) = b(2)/a(2);
         Q(2) = ( d(2)-c(2)*T(i,1) )/ a(2);
         for j = 3:cols    % for (almost) each column in the P-matrix
-            ae = deltaX(i)/(x(i+1) - x(i)) * gamma;
-            aw = deltaX(i)/(x(i) - x(i-1)) * gamma;
+            ae = deltaX(j)/(x(j+1) - x(j)) * gamma;
+            aw = deltaX(j)/(x(j) - x(j-1)) * gamma;
             
             ap = ae + aw + an + as;
             
             a(j) = ap;
             b(j) = ae*eCoeff(i,j);
             c(j) = aw*wCoeff(i,j);
-            d(j) = an*T(i-1,j) + as*T(i+1,j); % + source term??
+            d(j) = an*T(i+1,j) + as*T(i-1,j); % + source term??
             
             P(j) = b(j) / (a(j) - c(j)*P(j-1));
             Q(j) = (d(j) + c(j)*Q(j-1))/(a(j)-c(j)*P(j-1));
         end
         
-        disp('abc')        
-        disp(diag(a(2:end),0) + diag(b(2:end-1),1) + diag(c(2:end-1),-1))
-        disp([P'; Q'])
+        %disp('abc')        
+        %disp(diag(a(2:end),0) + diag(b(2:end-1),1) + diag(c(2:end-1),-1))
+        %disp(' ')
+        disp([a';b';c';d'])
         disp(' ')
-        
+        disp([P'; Q'])
+        %disp(' ')
         
         T(i,end-1) = Q(end-1);
-        for j = cols-1:-1:2
-            T(i,j) = Q(j) + P(j)*T(j+1);
+        for j = cols-2:-1:2
+            %disp(['j ' num2str(j)]);
+            T(i,j) = Q(j) + P(j)*T(i,j+1);
+            %disp([Q(j), P(j), T(i,j+1)]);
         end
     end
     
