@@ -1,8 +1,8 @@
 close all
 clear all
 % read xc
-load ('grid4/fine_grid/xc.dat')
-load ('grid4/fine_grid/yc.dat')
+load ('grid2/fine_grid/xc.dat')
+load ('grid2/fine_grid/yc.dat')
 nim1=length(xc);
 % nim1 = ni-1 = number of grid lines. Number of cell nodes = ni
 ni=nim1+1;
@@ -13,8 +13,8 @@ njm1=length(yc);
 nj=njm1+1;
 %
 % read u
-load ('grid4/fine_grid/u.dat')
-load ('grid4/fine_grid/v.dat')
+load ('grid2/fine_grid/u.dat')
+load ('grid2/fine_grid/v.dat')
 u2d=reshape(u,ni,nj);
 
 % read v
@@ -61,4 +61,4 @@ yp=yp';
 vec= 5
 quiver(xp,yp,u2d,v2d,vec)
 axis('equal')
-print vectxy.ps -deps
+%print vectxy.ps -deps
