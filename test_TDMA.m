@@ -32,12 +32,12 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
         ae = deltaX(2)/(x(2+1) - x(2)) * gamma;
         aw = deltaX(2)/(x(2) - x(2-1)) * gamma;
 
-        ap = ae + aw + an + as;
+        ap = ae*eCoeff(i,2) + aw*wCoeff(i,2) + an*nCoeff(i,2) + as*sCoeff(i,2);
         
         a(2) = ap;
         b(2) = ae*eCoeff(i,2);
         c(2) = aw*wCoeff(i,2);
-        d(2) = an*T(i-1,2) + as*T(i+1,2); % + source term??
+        d(2) = an*nCoeff(i,2)*T(i+1,2) + as*sCoeff(i,2)*T(i-1,2); % + source term??
                 
         P(2) = b(2)/a(2);
         Q(2) = ( d(2)-c(2)*T(i,1) )/ a(2);
@@ -45,12 +45,12 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
             ae = deltaX(j)/(x(j+1) - x(j)) * gamma;
             aw = deltaX(j)/(x(j) - x(j-1)) * gamma;
             
-            ap = ae + aw + an + as;
+            ap = ae*eCoeff(i,j) + aw*wCoeff(i,j) + an*nCoeff(i,j) + as*sCoeff(i,j);
             
             a(j) = ap;
             b(j) = ae*eCoeff(i,j);
             c(j) = aw*wCoeff(i,j);
-            d(j) = an*T(i+1,j) + as*T(i-1,j); % + source term??
+            d(j) = an*nCoeff(i,j)*T(i+1,j) + as*sCoeff(i,j)*T(i-1,j); % + source term??
             
             P(j) = b(j) / (a(j) - c(j)*P(j-1));
             Q(j) = (d(j) + c(j)*Q(j-1))/(a(j)-c(j)*P(j-1));
@@ -62,8 +62,7 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
         disp([a';b';c';d'])
         disp(' ')
         disp([P'; Q'])
-        %disp(' ')
-        
+                
         T(i,end-1) = Q(end-1);
         for j = cols-2:-1:2
             %disp(['j ' num2str(j)]);
