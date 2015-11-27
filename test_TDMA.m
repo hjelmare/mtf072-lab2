@@ -41,7 +41,7 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
                 
         P(2) = b(2)/a(2);
         Q(2) = ( d(2)-c(2)*T(i,1) )/ a(2);
-        for j = 3:cols    % for (almost) each column in the P-matrix
+        for j = 3:cols-1    % for (almost) each column in the P-matrix
             ae = deltaX(j)/(x(j+1) - x(j)) * gamma;
             aw = deltaX(j)/(x(j) - x(j-1)) * gamma;
             
@@ -60,11 +60,11 @@ function [T] = test_TDMA(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor)
         %disp(diag(a(2:end),0) + diag(b(2:end-1),1) + diag(c(2:end-1),-1))
         %disp(' ')
         disp([a';b';c';d'])
-        disp(' ')
+        disp(' ');
         disp([P'; Q'])
                 
-        T(i,end-1) = Q(end-1);
-        for j = cols-2:-1:2
+        %T(i,end-1) = Q(end-1);
+        for j = cols-1:-1:2
             %disp(['j ' num2str(j)]);
             T(i,j) = Q(j) + P(j)*T(i,j+1);
             %disp([Q(j), P(j), T(i,j+1)]);
