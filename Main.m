@@ -24,19 +24,22 @@ edgesY = dlmread('data/yc.dat')';
 
 tic
 %Initializing mesh and temperature
-[T, y, x] = initializeMesh(edgesY,  edgesX,T1,T2,T3,T4);
+[T, y, x] = initializeMesh(edgesY,edgesX,T1,T2,T3,T4);
 deltaX = diff(edgesX);
 deltaX = [1 deltaX 1];
 deltaY = diff(edgesY);
 deltaY = [1 deltaY 1];
 
+%Pre-calculating coefficients
+aCoeff = CalcCoefficients(T,x,y,deltaX,deltaY,gamma,BC,kFactor);
+
 %Gauss-Seidel loop
 epsilon = inf;
 while (epsilon > maxDiff)
    
-    T = GaussSeidel(T,x,y,deltaX,deltaY,T1,c1,c2,kFactor,BC);
+    T = GaussSeidel(T,aCoeff);
     
-    epsilon = CalcEpsilon(T,x,y,deltaX,deltaY,gamma,BC);
+    epsilon = CalcEpsilon(T,aCoeff);
     
 end
 

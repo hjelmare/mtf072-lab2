@@ -1,48 +1,37 @@
-%function epsilon = CalcEpsilon(T,x,y,deltaX,deltaY,gamma,BC);
+function epsilon = CalcEpsilon(T,aCoeff)
 
-    [cols,rows] = size(T);
+    [rows,cols] = size(T);
     
-    %Source term
-    bu = 0;
-    bp = 0;
+    %Defining source term Su
+    Su = zeros(rows,cols); %No source
     
-    %Precalculating aEast
-    aEast = gamma .* (deltaY(2:end-1)./diff(x(1:end-1)));
-    aEast(1) = aEast(1) * BC(4);
+    %Extracting variables from struct variable
+    aP = aCoeff.point;
+    aE = aCoeff.east;
+    aW = aCoeff.west;
+    aN = aCoeff.north;
+    aS = aCoeff.south;
+
     
-    %Precalculating aWest
-    aWest = gamma .* (deltaY(2:end-1)./diff(x(2:end)));
-    aWest(end) = aWest(end) * BC(2);
-    
-    %Precalculating aNorth
-    aNorth = gamma .* (deltaX(2:end-1)./diff(y(2:end)));
-    aNorth(end) = aNorth(end) * BC(3);
-    
-    %Precalculating aSouth
-    aSouth = gamma .* (deltaX(2:end-1)./diff(y(1:end-1)));
-    aSouth(1) = aSouth(1) * BC(1);
-    
+    %Summing up residuals forall cells
+    sumR = 0;
     for j = 2:cols-1
-        ae = aEast(j);
-        ew = aWest(j);
         for i = 2:rows-1
-            Tp = T(i,j);
+            %Extracting
             Te = T(i,j+1);
             Tw = T(i,j-1);
             Tn = T(i+1,j);
             Ts = T(i-1,j);
-            an = aNorth(i);
-            as = aSouth(i);
-            ap = ae + aw + an + as - bp;
             
-            R = abs(ap*Tp - ae*Te - aw*Tw - an*Tn - as*Ts - bu);
-            
+            %Calculating residual for cell i,j
+            R = abs(aP(i,j)*T(i,j) - (aE(i,j)*Te + aW(i,j)*Tw + ...
+                aN(i,j)*Tn + aS(i,j)*Ts + Su(i,j)));
+                  
+            sumR = sumR + R;
         end
-    end  
-   
+    end
+    
+    flux = 1; %Need to change this
+    epsilon = sumR/flux;
 
-
-
-
-
-%end
+end
