@@ -1,4 +1,5 @@
-function aCoeff = CalcCoefficients(T,x,y,deltaX,deltaY,gamma,BC,kFactor)
+function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
+    kFactor)
 
     [rows,cols] = size(T);
     
@@ -23,16 +24,33 @@ function aCoeff = CalcCoefficients(T,x,y,deltaX,deltaY,gamma,BC,kFactor)
     
     for j = 2:cols-1
         for i = 2:rows-1
-            aCoeff.east(i,j) = kFactor * gamma * deltaY(i)/dXeast(j);
-            aCoeff.west(i,j) = kFactor * gamma * deltaY(i)/dXwest(j);
-            aCoeff.north(i,j) = kFactor * gamma * deltaX(j)/dYnorth(i);
-            aCoeff.south(i,j) = kFactor * gamma * deltaX(j)/dYsouth(i);            
+             
+            %Calculating F and D
+            Fw = (rho*u(i,j-1))*deltaY(i);
+            Fe = (rho*u(i,j+1))*deltaY(i);
+            Fs = (rho*v(i-1,j))*deltaX(j);  
+            Fn = (rho*v(i+1,j))*deltaX(j);
+            Dw  = kFactor*gamma*deltaY(i)/dXwest(j);
+            De  = kFactor*gamma*deltaY(i)/dXeast(j);
+            Ds  = kFactor*gamma*deltaX(j)/dYsouth(i);
+            Dn  = kFactor*gamma*deltaX(j)/dYnorth(i);
+            
+            %Calculating coefficients
+            west = max(Fw,(Dw+Fw/2));
+            aCoeff.west(i,j) = max(0,west);
+            east = max(-Fe,(De-Fe/2));
+            aCoeff.east(i,j) = max(0,east);
+            south = max(Fs,(Ds+Fs/2));
+            aCoeff.south(i,j) =max(0,south);
+            north = max(-Fn,(Dn-Fn/2));
+            aCoeff.north(i,j) = max(0,north); 
+          
         end
     end
 
     %Implemenmting boundary conditions in coefficients
-    aCoeff.east(:,2) = aCoeff.east(:,2) * BC(4);
-    aCoeff.west(:,end-1) = aCoeff.west(:,end-1) * BC(2);
+    aCoeff.east(:,end-1) = aCoeff.east(:,end-1) * BC(2);
+    aCoeff.west(:,2) = aCoeff.west(:,2) * BC(4);
     aCoeff.north(end-1,:) = aCoeff.north(end-1,:) * BC(3);
     aCoeff.south(2,:) = aCoeff.south(2,:) * BC(1);
     

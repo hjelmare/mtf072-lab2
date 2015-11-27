@@ -1,4 +1,4 @@
-function epsilon = CalcEpsilon(T,aCoeff)
+function epsilon = CalcEpsilon(T,aCoeff,y)
 
     [rows,cols] = size(T);
     
@@ -31,7 +31,7 @@ function epsilon = CalcEpsilon(T,aCoeff)
         end
     end
     
-    flux = 1; %Need to change this
+    flux = 0.03 * abs(sum(T(y<0.03,2)) - sum(T(y>1.97,2)));
     epsilon = sumR/flux;
 
 end

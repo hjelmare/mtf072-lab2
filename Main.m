@@ -3,59 +3,73 @@ clc;
 clear variables;
 
 %Declaration of scalar variables
+grid = 'coarse';
+%grid = 'fine';
 maxDiff = 1e-3;
-initialT = 5;
 kFactor = 1;
+rho = 1;
 gamma = 1/500;
 L = 1;
 H = 1;
 T1 = 10;
-T2 = 20;
-T3 = 5;
+T2 = 0;
+T3 = 0;
 T4 = 10;
-c1 = 20;
-c2 = 0.2;
-BC = [2 2 0 2];
+Ta = 20;
+ha = 1.97;
+BC = [0 0 0 2];
 
-% Non-uniform grid
-edgesX = dlmread('data/xc.dat')';
-edgesY = dlmread('data/yc.dat')';
+% Loading grid and velocity data
+edgesX = dlmread(['data/grid2/' grid '_grid/xc.dat'])';
+edgesY = dlmread(['data/grid2/' grid '_grid/yc.dat'])';
+u = dlmread(['data/grid2/' grid '_grid/u.dat'])';
+v = dlmread(['data/grid2/' grid '_grid/v.dat'])';
 
+%Reshapeing velocity vectors
+Nx = length(edgesX) + 1;
+Ny = length(edgesY) + 1;
+u = reshape(u,Nx,Ny);
+v = reshape(v,Nx,Ny);
 
 tic
 %Initializing mesh and temperature
 [T, y, x] = initializeMesh(edgesY,edgesX,T1,T2,T3,T4);
+T(y>ha,1) = Ta;
 deltaX = diff(edgesX);
 deltaX = [1 deltaX 1];
 deltaY = diff(edgesY);
 deltaY = [1 deltaY 1];
 
 %Pre-calculating coefficients
-aCoeff = CalcCoefficients(T,x,y,deltaX,deltaY,gamma,BC,kFactor);
+aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,kFactor);
 
-%Gauss-Seidel loop
+%Gauss-Seidel/TMDA loop
 epsilon = inf;
 while (epsilon > maxDiff)
    
-    T = GaussSeidel(T,aCoeff);
-    
-    epsilon = CalcEpsilon(T,aCoeff);
+    T = TDMA2(T,aCoeff);
+    %T = GaussSeidel(T,aCoeff);
+    epsilon = CalcEpsilon(T,aCoeff,y);
     
 end
 
 %Calculate gradient
 [dX,dY] = CalcGradient(T,x,y);
 
+%Deleting frame/border-values
 T = T(2:end-1,2:end-1);
-[xMesh,yMesh] = meshgrid(x(2:end-1),y(2:end-1));
+x = x(2:end-1);
+y = y(2:end-1);
+[xMesh,yMesh] = meshgrid(x,y);
 
 %Plotting result
-figure(1);
+figure();
 contourf(xMesh,yMesh,T,20);
 hold on
-quiver(x(2:2:end-1),y(2:2:end-1),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
+quiver(x(1:2:end),y(1:2:end),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
+%quiver(x,y,u,v,5)
 axis equal
-axis([x(2) x(end-1) y(2) y(end-1)]);
+axis([x(1) x(end) y(1) y(end)]);
 colorbar;
 
 % Plot grid points
@@ -63,14 +77,15 @@ colorbar;
 
 
 % Boundary conditions (green for heat flux (Dirichlet), red for Neumann)
-plot([x(2) x(end-1)],[y(2) y(2)],'g','LineWidth',3)
-plot([x(end-1) x(end-1)],[y(2) y(end-1)],'g','LineWidth',3)
-plot([x(2) x(end-1)],[y(end-1) y(end-1)],'r','LineWidth',3)
-plot([x(2) x(2)],[y(2) y(end-1)],'g','LineWidth',3)
+color = 'rbg';
+plot([x(1) x(end)],[y(1) y(1)],color(BC(1)+1),'LineWidth',3)
+plot([x(end) x(end)],[y(1) y(end)],color(BC(2)+1),'LineWidth',3)
+plot([x(1) x(end)],[y(end) y(end)],color(BC(3)+1),'LineWidth',3)
+plot([x(1) x(1)],[y(1) y(end)],color(BC(4)+1),'LineWidth',3)
 hold off
 
 time = toc;
 disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
  
-saveas(gcf,['vector' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+%saveas(gcf,['vector' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
