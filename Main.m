@@ -18,6 +18,7 @@ T4 = 10;
 Ta = 20;
 ha = 1.97;
 BC = [0 0 0 2];
+BC = [2 0 0 2];
 
 % Loading grid and velocity data
 edgesX = dlmread(['data/grid2/' grid '_grid/xc.dat'])';
@@ -65,7 +66,7 @@ y = y(2:end-1);
 [xMesh,yMesh] = meshgrid(x,y);
 
 %Plotting result
-figure();
+figure(1);
 contourf(xMesh,yMesh,T,20);
 hold on
 %quiver(x(1:2:end),y(1:2:end),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
@@ -91,3 +92,11 @@ disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
  
 %saveas(gcf,['vector' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
+
+% Plot temp along wall
+figure(2);
+plot(y,T(:,end)')
+xlabel('y','FontSize',12)
+ylabel('T','FontSize',12)
+
+%saveas(gcf,['temp' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
