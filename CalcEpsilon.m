@@ -31,7 +31,7 @@ function epsilon = CalcEpsilon(T,aCoeff,y)
         end
     end
     
-    flux = 0.03 * abs(sum(T(y<0.03,2)) - sum(T(y>1.97,2)));
+    flux = 0.03 * abs(mean(T(y<0.03,2)) - mean(T(y>1.97,2)));
     epsilon = sumR/flux;
 
 end

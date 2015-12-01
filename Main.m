@@ -3,8 +3,8 @@ clc;
 clear variables;
 
 %Declaration of scalar variables
-grid = 'coarse';
-%grid = 'fine';
+%grid = 'coarse';
+grid = 'fine';
 maxDiff = 1e-3;
 kFactor = 1;
 rho = 1;
@@ -58,6 +58,8 @@ end
 
 %Deleting frame/border-values
 T = T(2:end-1,2:end-1);
+u = u(2:end-1,2:end-1);
+v = v(2:end-1,2:end-1);
 x = x(2:end-1);
 y = y(2:end-1);
 [xMesh,yMesh] = meshgrid(x,y);
@@ -66,8 +68,8 @@ y = y(2:end-1);
 figure();
 contourf(xMesh,yMesh,T,20);
 hold on
-quiver(x(1:2:end),y(1:2:end),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
-%quiver(x,y,u,v,5)
+%quiver(x(1:2:end),y(1:2:end),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
+quiver(x,y,u,v,5)
 axis equal
 axis([x(1) x(end) y(1) y(end)]);
 colorbar;
