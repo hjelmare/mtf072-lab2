@@ -1,5 +1,7 @@
 function epsilon = CalcEpsilon(T,aCoeff,y)
 
+    h = 0.03;   % Height of inlet/outlet
+
     [rows,cols] = size(T);
     
     %Defining source term Su
@@ -31,7 +33,7 @@ function epsilon = CalcEpsilon(T,aCoeff,y)
         end
     end
     
-    flux = 0.03 * abs(sum(T(y<0.03,2)) - sum(T(y>1.97,2)));
+    flux = h * abs(sum(T(y<h,2)) - sum(T(y>2-h,2)));
     epsilon = sumR/flux;
 
 end
