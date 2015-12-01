@@ -1,4 +1,4 @@
-%Main program in CFD assignment K1
+%Main program in CFD assignment K2
 clc;
 clear variables;
 
