@@ -18,7 +18,7 @@ T4 = 10;
 Ta = 20;
 ha = 1.97;
 BC = [0 0 0 2];
-%BC = [2 0 0 2];
+BC = [2 0 0 2];
 
 % Loading grid and velocity data
 edgesX = dlmread(['data/grid2/' grid '_grid/xc.dat'])';
@@ -48,8 +48,8 @@ aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,kFactor);
 epsilon = inf;
 while (epsilon > maxDiff)
    
-    %T = TDMA2(T,aCoeff);
-    T = GaussSeidel(T,aCoeff);
+    T = TDMA2(T,aCoeff);
+    %T = GaussSeidel(T,aCoeff);
     epsilon = CalcEpsilon(T,aCoeff,y);
     
 end
@@ -66,7 +66,7 @@ y = y(2:end-1);
 [xMesh,yMesh] = meshgrid(x,y);
 
 %Plotting result
-figure(1);
+figure(11);
 contourf(xMesh,yMesh,T,20);
 hold on
 %quiver(x(1:2:end),y(1:2:end),-dX(1:2:end,1:2:end),-dY(1:2:end,1:2:end),'r','AutoScaleFactor',5);
@@ -90,13 +90,13 @@ hold off
 time = toc;
 disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
  
-saveas(gcf,['vector_gs_bc1' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+%saveas(gcf,['vector_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
 
 % Plot temp along wall
-figure(2);
-plot(y,T(:,end)')
-xlabel('y','FontSize',12)
-ylabel('T','FontSize',12)
+% figure(2);
+% plot(y,T(:,end)')
+% xlabel('y','FontSize',12)
+% ylabel('T','FontSize',12)
 
-saveas(gcf,['temp_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+%saveas(gcf,['temp_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')

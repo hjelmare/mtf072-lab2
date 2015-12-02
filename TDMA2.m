@@ -42,7 +42,7 @@ function T = TDMA2(T,aCoeff)
         for j = cols-1:-1:2
             T(i,j) = Q(j) + P(j)*T(i,j+1);
         end
-   
+        
     end
 
 

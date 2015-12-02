@@ -48,7 +48,7 @@ function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
         end
     end
 
-    %Implemenmting boundary conditions in coefficients
+    %Implementing boundary conditions in coefficients
     aCoeff.east(:,end-1) = aCoeff.east(:,end-1) * BC(2);
     aCoeff.west(:,2) = aCoeff.west(:,2) * BC(4);
     aCoeff.north(end-1,:) = aCoeff.north(end-1,:) * BC(3);
