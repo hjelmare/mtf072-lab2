@@ -1,4 +1,4 @@
-function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
+function aCoeff = CalcCoefficients2(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
     kFactor)
 
     [rows,cols] = size(T);
@@ -27,10 +27,10 @@ function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
         for i = 2:rows-1
              
             %Calculating F and D
-            Fw = (rho*u(i,j-1))*deltaY(i);
-            Fe = (rho*u(i,j+1))*deltaY(i);
-            Fs = (rho*v(i-1,j))*deltaX(j);  
-            Fn = (rho*v(i+1,j))*deltaX(j);
+            Fw = (rho*u(i,j-1))*deltaX(j)*deltaY(i)/dXwest(j);
+            Fe = (rho*u(i,j+1))*deltaX(j)*deltaY(i)/dXeast(j);
+            Fs = (rho*v(i-1,j))*deltaX(j)*deltaY(i)/dYsouth(i); 
+            Fn = (rho*v(i+1,j))*deltaX(j)*deltaY(i)/dYnorth(i); 
             deltaF(i,j) = Fe - Fw + Fn - Fs;
             Dw  = kFactor*gamma*deltaY(i)/dXwest(j);
             De  = kFactor*gamma*deltaY(i)/dXeast(j);

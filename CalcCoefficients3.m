@@ -1,5 +1,5 @@
-function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
-    kFactor)
+function aCoeff = CalcCoefficients3(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
+    kFactor,inletIndex,outletIndex)
 
     [rows,cols] = size(T);
     
@@ -27,10 +27,10 @@ function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
         for i = 2:rows-1
              
             %Calculating F and D
-            Fw = (rho*u(i,j-1))*deltaY(i);
-            Fe = (rho*u(i,j+1))*deltaY(i);
-            Fs = (rho*v(i-1,j))*deltaX(j);  
-            Fn = (rho*v(i+1,j))*deltaX(j);
+            Fw = (rho*u(i,j-1))*deltaX(j)*deltaY(i)/dXwest(j);
+            Fe = (rho*u(i,j+1))*deltaX(j)*deltaY(i)/dXeast(j);
+            Fs = (rho*v(i-1,j))*deltaX(j)*deltaY(i)/dYsouth(i); 
+            Fn = (rho*v(i+1,j))*deltaX(j)*deltaY(i)/dYnorth(i);
             deltaF(i,j) = Fe - Fw + Fn - Fs;
             Dw  = kFactor*gamma*deltaY(i)/dXwest(j);
             De  = kFactor*gamma*deltaY(i)/dXeast(j);
@@ -57,5 +57,31 @@ function aCoeff = CalcCoefficients(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,...
     aCoeff.south(2,:) = aCoeff.south(2,:) * BC(1);
     aCoeff.point = aCoeff.east + aCoeff.west + aCoeff.south + ...
         aCoeff.north + Sp;
-
+    
+    %Implementing BC on inlet/outlet on west side
+    j = 2;
+    for i = inletIndex(1):inletIndex(end)
+             
+        %Calculating F and D
+        Fw = (rho*u(i,j-1))*deltaX(j)*deltaY(i)/dXwest(j);
+        Dw  = kFactor*gamma*deltaY(i)/dXwest(j);
+        
+        %Calculating coefficients
+        aCoeff.west(i,j) = 2*Dw+Fw;  
+        aCoeff.point(i,j) = aCoeff.east(i,j) + aCoeff.west(i,j) + ...
+            aCoeff.south(i,j) + aCoeff.north(i,j) + Sp(i,j);
+            
+    end
+   
+    for i = outletIndex(1):outletIndex(end)
+             
+        %Calculating F and D
+        Dw  = kFactor*gamma*deltaY(i)/dXwest(j);
+        
+        %Calculating coefficients
+        aCoeff.west(i,j) = 2*Dw;  
+        aCoeff.point(i,j) = aCoeff.east(i,j) + aCoeff.west(i,j) + ...
+            aCoeff.south(i,j) + aCoeff.north(i,j) + Sp(i,j);
+            
+    end
 end
