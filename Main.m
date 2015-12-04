@@ -5,12 +5,13 @@ clear variables;
 %Declaration of scalar variables
 %grid = 'coarse';
 grid = 'fine';
-maxDiff = 0.0001;
+maxDiff = 1e-4;
 kFactor = 1;
 rho = 1;
-gamma = 1/500;
-L = 3;
-H = 2;
+c_p = 500;
+gamma = 1/c_p;
+L = 1;
+H = 1;
 T1 = 10;
 T2 = 0;
 T3 = 0;
@@ -101,16 +102,34 @@ plot([x(1) x(end)],[y(end) y(end)],color(BC(3)+1),'LineWidth',3)
 plot([x(1) x(1)],[y(1) y(end)],color(BC(4)+1),'LineWidth',3)
 hold off
 
-saveas(gcf,'3_01.png','png')
+
+time = toc;
+disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
+ 
+%saveas(gcf,['vector_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
 figure;
 plot(1:iteration,eps_save);
 
-
-% % Plot temp along wall
+% Plot temp along wall
 % figure(2);
 % plot(y,T(:,end)')
 % xlabel('y','FontSize',12)
 % ylabel('T','FontSize',12)
-% 
-% saveas(gcf,['tempTDMA' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+
+%saveas(gcf,['temp_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+
+% Conservation
+
+edgeLength = [deltaX(2:end-1) deltaY(2:end-1) deltaX(2:end-1) deltaY(2:end-1)];
+heatFlux = [dY(2,:) -dX(:,end-1)' -dY(end-1,:) dX(:,2)'];
+
+absDiffusion = kFactor * sum(abs(edgeLength .* heatFlux));
+diffusion = kFactor * sum(edgeLength .* heatFlux);
+
+speeds = [v(1,:) -u(:,end)' -v(end,:) u(:,1)'];
+absConvection = c_p*rho * sum(abs(edgeLength .* speeds));
+convection = c_p*rho * sum(edgeLength .* speeds);
+
+error = (diffusion + convection) / (absDiffusion + absConvection)
+
