@@ -5,7 +5,7 @@ clear variables;
 %Declaration of scalar variables
 %grid = 'coarse';
 grid = 'fine';
-maxDiff = 1e-4;
+maxDiff = 1e-3;
 kFactor = 1;
 rho = 1;
 c_p = 500;
@@ -73,6 +73,10 @@ disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
 %Calculate gradient
 [dX,dY] = CalcGradient(T,x,y);
 
+u_orig = u;
+v_orig = v;
+T_orig = T;
+
 %Deleting frame/border-values
 T = T(2:end-1,2:end-1);
 u = u(2:end-1,2:end-1);
@@ -121,15 +125,13 @@ plot(1:iteration,eps_save);
 
 % Conservation
 
-edgeLength = [deltaX(2:end-1) deltaY(2:end-1) deltaX(2:end-1) deltaY(2:end-1)];
-heatFlux = [dY(2,:) -dX(:,end-1)' -dY(end-1,:) dX(:,2)'];
+absDiffusion = kFactor * sum(abs(deltaY(2:end-1) .* -dX(:,2)'));
+diffusion = kFactor * sum(deltaY(2:end-1) .* -dX(:,2)');
 
-absDiffusion = kFactor * sum(abs(edgeLength .* heatFlux));
-diffusion = kFactor * sum(edgeLength .* heatFlux);
-
-speeds = [v(1,:) -u(:,end)' -v(end,:) u(:,1)'];
-absConvection = c_p*rho * sum(abs(edgeLength .* speeds));
-convection = c_p*rho * sum(edgeLength .* speeds);
+absConvection = c_p*rho * sum(abs(deltaY(1:end) .* u_orig(:,1)' .* T_orig(:,2)'));
+convection = c_p*rho * sum(deltaY(1:end) .* u_orig(:,1)' .* T_orig(:,2)');
 
 error = (diffusion + convection) / (absDiffusion + absConvection)
+
+close all
 
