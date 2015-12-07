@@ -40,14 +40,12 @@ outletIndex = find(u(:,1)<0);
 %Initializing mesh and temperature
 [T, y, x] = initializeMesh(edgesY,edgesX,T1,T2,T3,T4);
 T(inletIndex,1) = Ta;
-%u(inletIndex,1) = u(inletIndex,1)./2;
 deltaX = diff(edgesX);
 deltaX = [1 deltaX 1];
 deltaY = diff(edgesY);
 deltaY = [1 deltaY 1];
 
 %Pre-calculating coefficients
-%aCoeff = CalcCoefficients2(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,kFactor);
 aCoeff = CalcCoefficients3(T,x,y,u,v,rho,deltaX,deltaY,gamma,BC,kFactor,...
     inletIndex,outletIndex);
 
@@ -95,9 +93,6 @@ axis equal
 axis([x(1) x(end) y(1) y(end)]);
 colorbar;
 
-% Plot grid points
-%plot(xMesh,yMesh,'r.')
-
 % Boundary conditions (green for heat flux (Dirichlet), red for Neumann)
 color = 'rbg';
 plot([x(1) x(end)],[y(1) y(1)],color(BC(1)+1),'LineWidth',3)
@@ -105,10 +100,6 @@ plot([x(end) x(end)],[y(1) y(end)],color(BC(2)+1),'LineWidth',3)
 plot([x(1) x(end)],[y(end) y(end)],color(BC(3)+1),'LineWidth',3)
 plot([x(1) x(1)],[y(1) y(end)],color(BC(4)+1),'LineWidth',3)
 hold off
-
-
-time = toc;
-disp([num2str(length(x)) 'x' num2str(length(y)) ' pts in ' num2str(time) ' s' ])
  
 %saveas(gcf,['vector_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
@@ -123,6 +114,7 @@ plot(1:iteration,eps_save);
 
 %saveas(gcf,['temp_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
 
+
 % Conservation
 
 absDiffusion = kFactor * sum(abs(deltaY(2:end-1) .* -dX(:,2)'));
@@ -133,5 +125,5 @@ convection = c_p*rho * sum(deltaY(1:end) .* u_orig(:,1)' .* T_orig(:,2)');
 
 error = (diffusion + convection) / (absDiffusion + absConvection)
 
-close all
+
 
