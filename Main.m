@@ -101,10 +101,11 @@ plot([x(1) x(end)],[y(end) y(end)],color(BC(3)+1),'LineWidth',3)
 plot([x(1) x(1)],[y(1) y(end)],color(BC(4)+1),'LineWidth',3)
 hold off
  
-%saveas(gcf,['vector_gs' num2str(length(x)) 'x' num2str(length(y)) '.png'],'png')
+%saveas(gcf,['TDMA1.png'],'png')
 
 figure;
 plot(1:iteration,eps_save);
+%saveas(gcf,['TDMA_EPS2_0001.png'],'png')
 
 % Plot temp along wall
 % figure(2);
